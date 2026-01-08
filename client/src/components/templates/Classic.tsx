@@ -94,9 +94,14 @@ export function Classic({ data }: TemplateProps) {
                                         <a href={project.link} target="_blank" rel="noreferrer">{project.link}</a>
                                     </div>
                                 )}
-                                <p className="text-sm text-slate-600 whitespace-pre-line">
+                                <p className="text-sm text-slate-600 whitespace-pre-line mb-2">
                                     {project.description}
                                 </p>
+                                {project.technologies && project.technologies.length > 0 && (
+                                    <div className="text-sm text-slate-500 italic">
+                                        Stack: {project.technologies.join(', ')}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -113,6 +118,11 @@ export function Classic({ data }: TemplateProps) {
                                 <div>
                                     <div className="font-bold">{cert.name}</div>
                                     <div className="text-slate-700 italic text-sm">{cert.issuer}</div>
+                                    {cert.link && (
+                                        <div className="text-xs text-blue-800 mt-1">
+                                            <a href={cert.link} target="_blank" rel="noreferrer">View Certificate</a>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="text-sm text-slate-600 italic">
                                     {cert.date}

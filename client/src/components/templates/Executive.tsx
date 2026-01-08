@@ -65,9 +65,14 @@ export function Executive({ data }: TemplateProps) {
                                                 <a href={project.link} target="_blank" rel="noreferrer" className="hover:underline">{project.link.replace(/^https?:\/\//, '')}</a>
                                             </div>
                                         )}
-                                        <p className="text-slate-600 leading-relaxed">
+                                        <p className="text-slate-600 leading-relaxed mb-2">
                                             {project.description}
                                         </p>
+                                        {project.technologies && project.technologies.length > 0 && (
+                                            <div className="text-slate-500 text-sm">
+                                                <span className="font-bold">Technologies: </span>{project.technologies.join(', ')}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -85,6 +90,11 @@ export function Executive({ data }: TemplateProps) {
                                             <span className="text-lg font-bold text-slate-800">{cert.name}</span>
                                             <span className="text-[#64748b] italic mx-2">-</span>
                                             <span className="text-[#334155]">{cert.issuer}</span>
+                                            {cert.link && (
+                                                <a href={cert.link} target="_blank" rel="noreferrer" className="ml-2 text-sm text-blue-800 hover:underline">
+                                                    (View)
+                                                </a>
+                                            )}
                                         </div>
                                         <span className="text-sm font-bold text-[#64748b]">{cert.date}</span>
                                     </div>

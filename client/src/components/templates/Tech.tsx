@@ -112,9 +112,14 @@ export function Tech({ data }: TemplateProps) {
                                             <a href={project.link} target="_blank" rel="noreferrer">&lt;Link: {project.link.replace(/^https?:\/\//, '')} /&gt;</a>
                                         </div>
                                     )}
-                                    <p className="text-[#a9b1d6] text-sm leading-relaxed">
+                                    <p className="text-[#a9b1d6] text-sm leading-relaxed mb-2">
                                         {project.description}
                                     </p>
+                                    {project.technologies && project.technologies.length > 0 && (
+                                        <div className="text-[#565f89] text-xs font-mono">
+                                            <span className="text-[#7dcfff]">const</span> <span className="text-[#e0af68]">stack</span> = <span className="text-[#9ece6a]">[{project.technologies.map(t => `'${t}'`).join(', ')}]</span>;
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -127,11 +132,16 @@ export function Tech({ data }: TemplateProps) {
                         <div className="text-[#e0af68] text-sm mb-2">$ cat certifications.log</div>
                         <div className="space-y-2">
                             {data.certifications.map((cert, i) => (
-                                <div key={i} className="bg-[#24283b] p-3 rounded border border-[#414868] flex justify-between items-center text-sm">
+                                <div key={i} className="bg-[#24283b] p-3 rounded border border-[#414868] flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm gap-2">
                                     <div>
                                         <span className="text-[#7aa2f7] font-bold">{cert.name}</span>
                                         <span className="text-[#565f89] mx-2">|</span>
                                         <span className="text-[#a9b1d6]">{cert.issuer}</span>
+                                        {cert.link && (
+                                            <span className="ml-2 text-[#bb9af7]">
+                                                (<a href={cert.link} target="_blank" rel="noreferrer" className="hover:underline">link</a>)
+                                            </span>
+                                        )}
                                     </div>
                                     <span className="text-[#9ece6a]">{cert.date}</span>
                                 </div>

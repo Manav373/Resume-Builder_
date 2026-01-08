@@ -102,9 +102,18 @@ export function Creative({ data }: TemplateProps) {
                                                 <a href={project.link} target="_blank" rel="noreferrer" className="hover:underline">{project.link.replace(/^https?:\/\//, '')}</a>
                                             </div>
                                         )}
-                                        <p className="text-slate-600 leading-relaxed">
+                                        <p className="text-slate-600 leading-relaxed mb-2">
                                             {project.description}
                                         </p>
+                                        {project.technologies && project.technologies.length > 0 && (
+                                            <div className="flex flex-wrap gap-2">
+                                                {project.technologies.map((tech, t) => (
+                                                    <span key={t} className="text-xs bg-rose-100 text-rose-600 px-2 py-1 rounded-full font-bold">
+                                                        {tech}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -119,10 +128,15 @@ export function Creative({ data }: TemplateProps) {
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {data.certifications.map((cert, i) => (
-                                    <div key={i} className="bg-slate-50 p-4 rounded-lg border border-slate-100 flex flex-col justify-between">
+                                    <div key={i} className="bg-slate-50 p-4 rounded-lg border border-slate-100 flex flex-col justify-between group hover:border-rose-200 transition-colors">
                                         <div>
                                             <div className="font-bold text-slate-800">{cert.name}</div>
                                             <div className="text-rose-500 text-sm">{cert.issuer}</div>
+                                            {cert.link && (
+                                                <a href={cert.link} target="_blank" rel="noreferrer" className="text-xs text-rose-400 mt-1 inline-block hover:text-rose-600 hover:underline">
+                                                    View Certificate →
+                                                </a>
+                                            )}
                                         </div>
                                         <div className="text-xs text-slate-400 mt-2 text-right">
                                             {cert.date}

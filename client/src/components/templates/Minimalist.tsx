@@ -124,6 +124,15 @@ export function Minimalist({ data }: TemplateProps) {
                                         <p className="text-slate-600 leading-relaxed whitespace-pre-line group-hover:text-slate-900 transition-colors">
                                             {project.description}
                                         </p>
+                                        {project.technologies && project.technologies.length > 0 && (
+                                            <div className="flex flex-wrap gap-2 pt-1">
+                                                {project.technologies.map((tech, t) => (
+                                                    <span key={t} className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">
+                                                        {tech}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -143,7 +152,12 @@ export function Minimalist({ data }: TemplateProps) {
                                     </div>
                                     <div>
                                         <div className="font-semibold text-slate-800">{cert.name}</div>
-                                        <div className="text-slate-500 text-sm">{cert.issuer}</div>
+                                        <div className="text-slate-500 text-sm mb-1">{cert.issuer}</div>
+                                        {cert.link && (
+                                            <a href={cert.link} target="_blank" rel="noreferrer" className="text-xs text-blue-500 hover:underline">
+                                                Verification Link
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             ))}

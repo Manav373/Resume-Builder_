@@ -94,6 +94,12 @@ export function Ivy({ data }: TemplateProps) {
                                     <p className="text-sm text-justify">
                                         {project.description}
                                     </p>
+                                    {project.technologies && project.technologies.length > 0 && (
+                                        <div className="text-sm mt-1">
+                                            <span className="font-bold">Technologies: </span>
+                                            {project.technologies.join(', ')}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -110,6 +116,11 @@ export function Ivy({ data }: TemplateProps) {
                                     <div>
                                         <span className="font-bold">{cert.name}</span>
                                         <span className="text-sm">, {cert.issuer}</span>
+                                        {cert.link && (
+                                            <span className="text-sm ml-2">
+                                                - <a href={cert.link} target="_blank" rel="noreferrer" className="italic hover:underline">Link</a>
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="text-right text-sm">{cert.date}</div>
                                 </div>

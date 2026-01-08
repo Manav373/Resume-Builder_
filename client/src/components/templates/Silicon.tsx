@@ -69,9 +69,18 @@ export function Silicon({ data }: TemplateProps) {
                                             <a href={project.link} target="_blank" rel="noreferrer" className="hover:underline">{project.link.replace(/^https?:\/\//, '')}</a>
                                         </div>
                                     )}
-                                    <p className="text-slate-600 text-sm leading-relaxed">
+                                    <p className="text-slate-600 text-sm leading-relaxed mb-2">
                                         {project.description}
                                     </p>
+                                    {project.technologies && project.technologies.length > 0 && (
+                                        <div className="flex flex-wrap gap-1">
+                                            {project.technologies.map((tech, t) => (
+                                                <span key={t} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-100">
+                                                    {tech}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -87,7 +96,12 @@ export function Silicon({ data }: TemplateProps) {
                                 <div key={i} className="flex justify-between items-baseline border-b border-slate-100 pb-2">
                                     <div>
                                         <div className="font-medium text-slate-900">{cert.name}</div>
-                                        <div className="text-slate-500 text-xs">{cert.issuer}</div>
+                                        <div className="text-slate-500 text-xs mb-1">{cert.issuer}</div>
+                                        {cert.link && (
+                                            <a href={cert.link} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline">
+                                                View Credential
+                                            </a>
+                                        )}
                                     </div>
                                     <div className="text-slate-400 text-xs font-mono">{cert.date}</div>
                                 </div>

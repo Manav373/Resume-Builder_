@@ -135,9 +135,18 @@ export function ModernSidebar({ data }: TemplateProps) {
                                             </a>
                                         )}
                                     </div>
-                                    <p className="text-sm text-slate-600 whitespace-pre-line leading-relaxed">
+                                    <p className="text-sm text-slate-600 whitespace-pre-line leading-relaxed mb-2">
                                         {project.description}
                                     </p>
+                                    {project.technologies && project.technologies.length > 0 && (
+                                        <div className="flex flex-wrap gap-1">
+                                            {project.technologies.map((tech, t) => (
+                                                <span key={t} className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">
+                                                    {tech}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -155,7 +164,12 @@ export function ModernSidebar({ data }: TemplateProps) {
                                 <div key={i} className="flex justify-between items-start border-b border-slate-100 pb-2">
                                     <div>
                                         <div className="font-bold text-slate-900">{cert.name}</div>
-                                        <div className="text-sm text-slate-600">{cert.issuer}</div>
+                                        <div className="text-sm text-slate-600 mb-1">{cert.issuer}</div>
+                                        {cert.link && (
+                                            <a href={cert.link} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline">
+                                                View Certificate
+                                            </a>
+                                        )}
                                     </div>
                                     <div className="text-xs font-semibold text-slate-500 bg-slate-50 px-2 py-1 rounded">
                                         {cert.date}
