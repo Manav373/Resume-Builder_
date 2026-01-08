@@ -1,0 +1,210 @@
+.swipe-card-container {
+  background-color: hsl(var(--card));
+  display: flex;
+  width: 100%;
+  min-width: 250px;
+  height: 90px;
+  position: relative;
+  border-radius: 8px;
+  transition: 0.3s ease-in-out;
+  border: 1px solid hsl(var(--border));
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.swipe-card-container:hover {
+  transform: scale(1.02);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.swipe-card-left {
+  background-color: hsl(var(--primary));
+  width: 100px;
+  height: 100%;
+  border-radius: 6px 0 0 6px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.swipe-card-right {
+  width: calc(100% - 100px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  justify-content: space-between;
+  white-space: nowrap;
+  transition: 0.3s;
+  padding: 0 16px;
+}
+
+.swipe-card-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.swipe-card-label span:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swipe-card-sublabel {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swipe-card-arrow {
+  width: 20px;
+  height: 20px;
+  color: hsl(var(--muted-foreground));
+  transition: 0.3s;
+}
+
+.swipe-card-container:hover .swipe-card-arrow {
+  color: hsl(var(--primary));
+  transform: translateX(4px);
+}
+
+/* The "Resume" Card */
+.swipe-card-doc {
+  width: 50px;
+  height: 38px;
+  background-color: white;
+  /* Resume paper is usually white */
+  border-radius: 3px;
+  position: absolute;
+  display: flex;
+  z-index: 10;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.swipe-card-doc-line {
+  width: 100%;
+  height: 2px;
+  background-color: #cbd5e1;
+  /* slate-300 */
+  border-radius: 1px;
+  margin-bottom: 2px;
+}
+
+.swipe-card-doc-header {
+  width: 40%;
+  height: 4px;
+  background-color: hsl(var(--primary));
+  border-radius: 1px;
+  margin-bottom: 4px;
+  align-self: flex-start;
+}
+
+/* The "Slot" / Post */
+.swipe-card-slot {
+  width: 50px;
+  height: 60px;
+  background-color: hsl(var(--accent));
+  /* Slightly lighter than primary */
+  position: absolute;
+  z-index: 11;
+  bottom: 0px;
+  top: 65px;
+  /* Adjust based on container height */
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.swipe-card-slot:before {
+  content: "";
+  position: absolute;
+  width: 36px;
+  height: 4px;
+  background-color: rgba(0, 0, 0, 0.2);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 0 0 2px 2px;
+}
+
+/* Animations */
+.swipe-card-container:hover .swipe-card-doc {
+  animation: slide-doc-in 1.2s cubic-bezier(0.645, 0.045, 0.355, 1) both;
+}
+
+.swipe-card-container:hover .swipe-card-slot {
+  animation: slide-slot-up 1s cubic-bezier(0.165, 0.84, 0.44, 1) both;
+}
+
+@keyframes slide-doc-in {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-45px) rotate(90deg);
+  }
+
+  60% {
+    transform: translateY(-45px) rotate(90deg);
+  }
+
+  100% {
+    transform: translateY(-8px) rotate(90deg);
+  }
+}
+
+@keyframes slide-slot-up {
+  50% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-50px);
+  }
+}
+
+/* Inserted Check Icon */
+.swipe-card-check {
+  opacity: 0;
+  color: hsl(var(--primary-foreground));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 12;
+}
+
+.swipe-card-container:hover .swipe-card-check {
+  animation: fade-in-check 0.4s 1s forwards;
+}
+
+@keyframes fade-in-check {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
