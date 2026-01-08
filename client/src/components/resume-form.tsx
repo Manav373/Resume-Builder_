@@ -744,7 +744,7 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                         type="button"
                                         variant="outline"
                                         onClick={async () => {
-                                            const savedId = resumeId || (isSaved ? "temp-id" : null); // In real app, we need the ID. 
+                                            // const savedId = resumeId || (isSaved ? "temp-id" : null); // In real app, we need the ID. 
                                             // If not saved, we can't generate easily without passing content.
                                             // Let's just navigate to portfolios page for now or show value prop.
                                             navigate("/dashboard/portfolios");

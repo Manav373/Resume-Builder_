@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Wand2, Eye, Download, Save, Trash2, Globe, ExternalLink, Plus } from "lucide-react";
+import { Loader2, Wand2, Eye, Download, Save, Trash2, Globe } from "lucide-react";
 import { useAppUser } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
 import { SwipeCard } from "@/components/ui/swipe-card";
