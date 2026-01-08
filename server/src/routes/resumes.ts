@@ -12,6 +12,8 @@ const resumeSchema = z.object({
     experience: z.any(),   // Store as JSON
     education: z.any(),    // Store as JSON
     skills: z.array(z.string()),
+    certifications: z.any().optional(), // Store as JSON
+    projects: z.any().optional(),       // Store as JSON
 });
 
 // Create Resume

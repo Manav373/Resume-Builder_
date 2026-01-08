@@ -75,6 +75,49 @@ export function Ivy({ data }: TemplateProps) {
                     </section>
                 )}
 
+                {/* Projects Section */}
+                {data.projects && data.projects.length > 0 && (
+                    <section>
+                        <h2 className="text-sm font-bold uppercase border-b border-black mb-2">Projects</h2>
+                        <div className="space-y-3">
+                            {data.projects.map((project, i) => (
+                                <div key={i}>
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <div className="font-bold">{project.name}</div>
+                                        <div className="text-right text-sm">{project.startDate} – {project.endDate || 'Present'}</div>
+                                    </div>
+                                    {project.link && (
+                                        <div className="text-sm italic mb-1">
+                                            <a href={project.link} target="_blank" rel="noreferrer" className="hover:underline">{project.link.replace(/^https?:\/\//, '')}</a>
+                                        </div>
+                                    )}
+                                    <p className="text-sm text-justify">
+                                        {project.description}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Certifications Section */}
+                {data.certifications && data.certifications.length > 0 && (
+                    <section>
+                        <h2 className="text-sm font-bold uppercase border-b border-black mb-2">Certifications</h2>
+                        <div className="space-y-2">
+                            {data.certifications.map((cert, i) => (
+                                <div key={i} className="flex justify-between items-baseline">
+                                    <div>
+                                        <span className="font-bold">{cert.name}</span>
+                                        <span className="text-sm">, {cert.issuer}</span>
+                                    </div>
+                                    <div className="text-right text-sm">{cert.date}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* Skills Section */}
                 {data.skills && data.skills.length > 0 && (
                     <section>

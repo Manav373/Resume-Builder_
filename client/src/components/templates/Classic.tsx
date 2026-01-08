@@ -76,6 +76,53 @@ export function Classic({ data }: TemplateProps) {
                     </div>
                 </section>
             )}
+            {/* Projects */}
+            {data.projects && data.projects.length > 0 && (
+                <section className="mb-8">
+                    <h2 className="text-xl font-bold uppercase border-b border-slate-300 mb-6 pb-1">Projects</h2>
+                    <div className="space-y-6">
+                        {data.projects.map((project, i) => (
+                            <div key={i}>
+                                <div className="flex justify-between items-baseline mb-1">
+                                    <h3 className="font-bold text-lg">{project.name}</h3>
+                                    <span className="text-sm italic text-slate-600">
+                                        {project.startDate} – {project.endDate || 'Present'}
+                                    </span>
+                                </div>
+                                {project.link && (
+                                    <div className="text-sm text-blue-800 mb-2 italic">
+                                        <a href={project.link} target="_blank" rel="noreferrer">{project.link}</a>
+                                    </div>
+                                )}
+                                <p className="text-sm text-slate-600 whitespace-pre-line">
+                                    {project.description}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* Certifications */}
+            {data.certifications && data.certifications.length > 0 && (
+                <section className="mb-8">
+                    <h2 className="text-xl font-bold uppercase border-b border-slate-300 mb-6 pb-1">Certifications</h2>
+                    <div className="space-y-4">
+                        {data.certifications.map((cert, i) => (
+                            <div key={i} className="flex justify-between items-center border-b border-slate-100 pb-2 last:border-0">
+                                <div>
+                                    <div className="font-bold">{cert.name}</div>
+                                    <div className="text-slate-700 italic text-sm">{cert.issuer}</div>
+                                </div>
+                                <div className="text-sm text-slate-600 italic">
+                                    {cert.date}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
 
             {/* Skills */}
             {data.skills && data.skills.length > 0 && (

@@ -91,6 +91,55 @@ export function Tech({ data }: TemplateProps) {
                     </section>
                 )}
 
+                {/* Projects */}
+                {data.projects && data.projects.length > 0 && (
+                    <section>
+                        <div className="text-[#e0af68] text-sm mb-4">$ ./show-projects.sh</div>
+                        <div className="space-y-6">
+                            {data.projects.map((project, i) => (
+                                <div key={i} className="relative pl-6">
+                                    <div className="absolute left-0 top-0 bottom-0 w-px bg-[#414868]"></div>
+                                    <div className="absolute left-[-4px] top-2 w-2 h-2 rounded-full bg-[#7aa2f7]"></div>
+
+                                    <div className="flex flex-col sm:flex-row sm:justify-between items-start mb-1">
+                                        <h3 className="text-[#7aa2f7] font-bold text-lg">{project.name}</h3>
+                                        <span className="text-[#565f89] font-mono text-xs">
+                                            [{project.startDate} :: {project.endDate || 'HEAD'}]
+                                        </span>
+                                    </div>
+                                    {project.link && (
+                                        <div className="text-[#bb9af7] mb-2 text-sm italic">
+                                            <a href={project.link} target="_blank" rel="noreferrer">&lt;Link: {project.link.replace(/^https?:\/\//, '')} /&gt;</a>
+                                        </div>
+                                    )}
+                                    <p className="text-[#a9b1d6] text-sm leading-relaxed">
+                                        {project.description}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Certifications */}
+                {data.certifications && data.certifications.length > 0 && (
+                    <section>
+                        <div className="text-[#e0af68] text-sm mb-2">$ cat certifications.log</div>
+                        <div className="space-y-2">
+                            {data.certifications.map((cert, i) => (
+                                <div key={i} className="bg-[#24283b] p-3 rounded border border-[#414868] flex justify-between items-center text-sm">
+                                    <div>
+                                        <span className="text-[#7aa2f7] font-bold">{cert.name}</span>
+                                        <span className="text-[#565f89] mx-2">|</span>
+                                        <span className="text-[#a9b1d6]">{cert.issuer}</span>
+                                    </div>
+                                    <span className="text-[#9ece6a]">{cert.date}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* Education */}
                 {data.education && data.education.length > 0 && (
                     <section>

@@ -81,6 +81,58 @@ export function Creative({ data }: TemplateProps) {
                         </section>
                     )}
 
+                    {/* Projects */}
+                    {data.projects && data.projects.length > 0 && (
+                        <section>
+                            <h2 className="text-2xl font-bold text-rose-500 mb-6 flex items-center gap-2">
+                                <span className="w-8 h-1 bg-rose-500 rounded-full"></span> Projects
+                            </h2>
+                            <div className="space-y-8">
+                                {data.projects.map((project, i) => (
+                                    <div key={i} className="relative pl-6 border-l-2 border-rose-100">
+                                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-rose-500 ring-4 ring-white"></div>
+                                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-2">
+                                            <h3 className="font-bold text-xl text-slate-800">{project.name}</h3>
+                                            <span className="text-sm font-bold text-rose-400 bg-rose-50 px-2 py-1 rounded">
+                                                {project.startDate} – {project.endDate || 'Present'}
+                                            </span>
+                                        </div>
+                                        {project.link && (
+                                            <div className="text-sm text-rose-500 font-medium mb-2">
+                                                <a href={project.link} target="_blank" rel="noreferrer" className="hover:underline">{project.link.replace(/^https?:\/\//, '')}</a>
+                                            </div>
+                                        )}
+                                        <p className="text-slate-600 leading-relaxed">
+                                            {project.description}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Certifications */}
+                    {data.certifications && data.certifications.length > 0 && (
+                        <section>
+                            <h2 className="text-2xl font-bold text-rose-500 mb-6 flex items-center gap-2">
+                                <span className="w-8 h-1 bg-rose-500 rounded-full"></span> Certifications
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {data.certifications.map((cert, i) => (
+                                    <div key={i} className="bg-slate-50 p-4 rounded-lg border border-slate-100 flex flex-col justify-between">
+                                        <div>
+                                            <div className="font-bold text-slate-800">{cert.name}</div>
+                                            <div className="text-rose-500 text-sm">{cert.issuer}</div>
+                                        </div>
+                                        <div className="text-xs text-slate-400 mt-2 text-right">
+                                            {cert.date}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     {/* Education */}
                     {data.education && data.education.length > 0 && (
                         <section>

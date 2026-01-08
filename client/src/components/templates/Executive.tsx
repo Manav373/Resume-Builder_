@@ -49,6 +49,50 @@ export function Executive({ data }: TemplateProps) {
                         </section>
                     )}
 
+                    {/* Projects */}
+                    {data.projects && data.projects.length > 0 && (
+                        <section>
+                            <h2 className="text-2xl font-serif text-[#1e293b] border-b-2 border-[#1e293b] pb-2 mb-6">Significant Projects</h2>
+                            <div className="space-y-6">
+                                {data.projects.map((project, i) => (
+                                    <div key={i}>
+                                        <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-2">
+                                            <h3 className="text-xl font-bold text-slate-800">{project.name}</h3>
+                                            <span className="text-[#64748b] bg-slate-200 px-3 py-1 text-sm rounded-full">{project.startDate} – {project.endDate || 'Present'}</span>
+                                        </div>
+                                        {project.link && (
+                                            <div className="text-[#334155] font-serif italic mb-2 text-sm">
+                                                <a href={project.link} target="_blank" rel="noreferrer" className="hover:underline">{project.link.replace(/^https?:\/\//, '')}</a>
+                                            </div>
+                                        )}
+                                        <p className="text-slate-600 leading-relaxed">
+                                            {project.description}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Certifications */}
+                    {data.certifications && data.certifications.length > 0 && (
+                        <section>
+                            <h2 className="text-2xl font-serif text-[#1e293b] border-b-2 border-[#1e293b] pb-2 mb-6">Certifications</h2>
+                            <div className="space-y-4">
+                                {data.certifications.map((cert, i) => (
+                                    <div key={i} className="flex justify-between items-center border-b border-dashed border-[#1e293b] pb-2">
+                                        <div>
+                                            <span className="text-lg font-bold text-slate-800">{cert.name}</span>
+                                            <span className="text-[#64748b] italic mx-2">-</span>
+                                            <span className="text-[#334155]">{cert.issuer}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-[#64748b]">{cert.date}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         {/* Education */}
                         {data.education && data.education.length > 0 && (

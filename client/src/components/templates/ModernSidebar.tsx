@@ -110,6 +110,61 @@ export function ModernSidebar({ data }: TemplateProps) {
                         </div>
                     </section>
                 )}
+
+
+                {/* Projects */}
+                {data.projects && data.projects.length > 0 && (
+                    <section>
+                        <h2 className="uppercase tracking-widest text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-2 mb-6">
+                            Projects
+                        </h2>
+                        <div className="space-y-6">
+                            {data.projects.map((project, i) => (
+                                <div key={i} className="relative pl-4 border-l-2 border-slate-200">
+                                    <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-900" />
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <h3 className="font-bold text-slate-900">{project.name}</h3>
+                                        <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                                            {project.startDate} – {project.endDate || 'Present'}
+                                        </span>
+                                    </div>
+                                    <div className="text-sm font-medium text-slate-700 mb-2">
+                                        {project.link && (
+                                            <a href={project.link} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+                                                {project.link.replace(/https?:\/\//, '')}
+                                            </a>
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-slate-600 whitespace-pre-line leading-relaxed">
+                                        {project.description}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Certifications */}
+                {data.certifications && data.certifications.length > 0 && (
+                    <section>
+                        <h2 className="uppercase tracking-widest text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-2 mb-6">
+                            Certifications
+                        </h2>
+                        <div className="grid grid-cols-1 gap-4">
+                            {data.certifications.map((cert, i) => (
+                                <div key={i} className="flex justify-between items-start border-b border-slate-100 pb-2">
+                                    <div>
+                                        <div className="font-bold text-slate-900">{cert.name}</div>
+                                        <div className="text-sm text-slate-600">{cert.issuer}</div>
+                                    </div>
+                                    <div className="text-xs font-semibold text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                                        {cert.date}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
             </main>
         </div>
     );

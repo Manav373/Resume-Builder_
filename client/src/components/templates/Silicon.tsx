@@ -53,6 +53,49 @@ export function Silicon({ data }: TemplateProps) {
                     </section>
                 )}
 
+                {/* Projects */}
+                {data.projects && data.projects.length > 0 && (
+                    <section>
+                        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Projects</h2>
+                        <div className="space-y-6">
+                            {data.projects.map((project, i) => (
+                                <div key={i} className="group">
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <h3 className="font-medium text-slate-900">{project.name}</h3>
+                                        <span className="text-sm text-slate-400 font-mono">{project.startDate} — {project.endDate || 'Present'}</span>
+                                    </div>
+                                    {project.link && (
+                                        <div className="text-blue-600 text-sm mb-2">
+                                            <a href={project.link} target="_blank" rel="noreferrer" className="hover:underline">{project.link.replace(/^https?:\/\//, '')}</a>
+                                        </div>
+                                    )}
+                                    <p className="text-slate-600 text-sm leading-relaxed">
+                                        {project.description}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Certifications */}
+                {data.certifications && data.certifications.length > 0 && (
+                    <section>
+                        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Certifications</h2>
+                        <div className="space-y-4">
+                            {data.certifications.map((cert, i) => (
+                                <div key={i} className="flex justify-between items-baseline border-b border-slate-100 pb-2">
+                                    <div>
+                                        <div className="font-medium text-slate-900">{cert.name}</div>
+                                        <div className="text-slate-500 text-xs">{cert.issuer}</div>
+                                    </div>
+                                    <div className="text-slate-400 text-xs font-mono">{cert.date}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* Skills */}
                 {data.skills && data.skills.length > 0 && (
                     <section>

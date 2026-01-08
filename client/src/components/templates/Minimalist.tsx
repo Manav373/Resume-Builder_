@@ -100,6 +100,56 @@ export function Minimalist({ data }: TemplateProps) {
                         </div>
                     </section>
                 )}
+
+
+                {/* Projects */}
+                {data.projects && data.projects.length > 0 && (
+                    <section>
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-6">Projects</h2>
+                        <div className="space-y-10">
+                            {data.projects.map((project, i) => (
+                                <div key={i} className="grid grid-cols-[1fr_3fr] gap-8 group">
+                                    <div className="text-sm text-slate-400 pt-1 font-medium">
+                                        {project.startDate} — {project.endDate || 'Present'}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="font-semibold text-xl text-slate-800">
+                                            {project.name}
+                                        </h3>
+                                        {project.link && (
+                                            <a href={project.link} target="_blank" rel="noreferrer" className="text-blue-500 text-sm hover:underline">
+                                                {project.link.replace(/https?:\/\//, '')}
+                                            </a>
+                                        )}
+                                        <p className="text-slate-600 leading-relaxed whitespace-pre-line group-hover:text-slate-900 transition-colors">
+                                            {project.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Certifications */}
+                {data.certifications && data.certifications.length > 0 && (
+                    <section>
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-6">Certifications</h2>
+                        <div className="space-y-6">
+                            {data.certifications.map((cert, i) => (
+                                <div key={i} className="grid grid-cols-[1fr_3fr] gap-8 items-baseline">
+                                    <div className="text-sm text-slate-400 font-medium">
+                                        {cert.date}
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-slate-800">{cert.name}</div>
+                                        <div className="text-slate-500 text-sm">{cert.issuer}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
             </div>
         </div>
     );
