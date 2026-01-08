@@ -71,43 +71,47 @@ router.post("/generate-portfolio", async (req, res) => {
         const { resumeData } = portfolioSchema.parse(req.body);
 
         const prompt = `
-      You are an elite web designer and developer. Generate a stunning, high-end, single-file HTML5 personal portfolio website using TailwindCSS (via CDN) based on the following resume data.
+      You are an elite creative developer known for winning Awwwards. Generate a "Bento-Style", high-end, single-file HTML5 personal portfolio website using TailwindCSS (via CDN) based on the following resume data.
 
       Resume Data:
       ${JSON.stringify(resumeData)}
 
       
       Design Requirements:
-      1. **COMPLETENESS**: The portfolio must be FULLY POPULATED. 
-         - **NO PLACEHOLDERS**. Do not use "Lorem Ipsum" or "Insert Text Here". 
-         - If specific details are missing in the Resume Data, **creatively infer** realistic, impressive details based on the user's role and skills.
-         - The content must be lengthy, professional, and convincing.
-      
-      2. **Aesthetics & UI**: 
-         - Use a "Premium Dark Mode" (slate-900 or zinc-950 base) with vibrant neon gradients (violet/blue/cyan) for text and borders.
-         - **Glassmorphism**: Extensive use of bg-white/5 or bg-black/40 with backdrop-blur-xl for cards, navbars, and modal backgrounds.
-         
-      3. **Structure & Sections** (Must include ALL of these):
-         - **Hero Section**: Full-height, with a dramatic headline, typing animation for roles, and a "Hire Me" CTA.
-         - **About Me**: A detailed professional bio (inferred from summary).
-         - **Skills Cloud**: Visually striking tags or animated progress bards.
-         - **Experience Timeline**: A vertical, connected timeline of roles with detailed bullet points.
-         - **Project Gallery**: A grid of cards with hover effects (zoom/glow). infer 3-4 realistic projects if none are listed.
-         - **Services/What I Do**: (Infer based on role) e.g., "Web Development", "UI Design", "Consulting".
-         - **Testimonials**: Generate 2-3 realistic, positive testimonials from "Previous Clients" or "Managers".
-         - **Contact Section**: A functional-looking form and large social icons.
-      
-      4. **Animations**: 
-         - Use AOS (Animate On Scroll) heavily.
-         - \`data-aos="fade-up"\` for cards, \`data-aos="zoom-in"\` for badges.
-         - Smooth scrolling for navigation links.
+      1. **Theme & Vibe**: 
+         - **Dark Mode Only**: Use \`bg-slate-950\` as the base.
+         - **Palette**: Use a primary accent of Neon Violet (\`violet-500\`) mixed with Cyan (\`cyan-400\`) for gradients.
+         - **Glassmorphism**: Heavy use of \`backdrop-blur-2xl\`, \`bg-white/5\`, and \`border-white/10\`.
+         - **Mesh Gradients**: Create fixed background blobs using large blurred divs with absolute positioning to create a mood.
+
+      2. **Layout Structure (Bento Grid)**:
+         - **Hero**: Minimalist, large typography, "scramble text" effect on hover for the name.
+         - **Grid System**: The main content (About, Experience, Projects) should be a CSS Grid (Bento Box style).
+         - **Cards**: Each section is a rounded card (\`rounded-3xl\`) with a \`hover:scale-[1.02]\` and glow effect.
+
+      3. **Specific Sections**:
+         - **Hero Section**: Huge Name, animated typing text for roles, and a "magnetic" CTA button.
+         - **Tech Stack**: Infinite scrolling marquee of skills.
+         - **Experience**: Use a "step-by-step" vertical styling inside a card.
+         - **Projects**: A grid of cards. logical inference for image placeholders (use realistic unsplash keywords).
+         - **Contact**: A glass card with large clickable email/social links.
+
+      4. **Animations & Interactivity**:
+         - **AOS**: Use \`data-aos="fade-up"\` with staggered delays.
+         - **Custom Cursor**: A small circle that follows the mouse (implement with vanilla JS script at the bottom).
+         - **Scroll Progress**: A thin gradient bar at the top fixed to scroll position.
+         - **Hover Effects**: All cards must have distinct hover states (border lighting up, slight lift).
+
+      5. **Content**:
+         - **NO LOREM IPSUM**. You must generate realistic, high-quality professional text everywhere.
+         - Infer missing details to make the user look like a top 1% expert.
 
       Technical Constraints:
       - Valid HTML5.
       - Tailwind CSS (CDN).
-      - Google Fonts (Outfit/Inter).
       - FontAwesome (CDN).
       - AOS Library (CDN).
+      - Google Fonts (Space Grotesk for headers, Inter for body).
       - **NO MARKDOWN**. Return ONLY the raw HTML string.
     `;
 
