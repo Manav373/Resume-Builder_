@@ -54,8 +54,7 @@ const generateSchema = z.object({
 });
 
 router.get("/test", async (req, res) => {
-    const rawKeys = process.env.GROQ_API_KEY || "";
-    const keys = rawKeys.split(",").filter(k => k.length > 0);
+    const keys = getAllApiKeys();
 
     const keyStatus = keys.map(k => ({
         validPrefix: k.startsWith("gsk_"),
