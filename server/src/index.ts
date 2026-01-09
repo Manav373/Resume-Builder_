@@ -51,3 +51,5 @@ const startServer = async () => {
 startServer();
 
 export default app;
+
+// Force restart for env vars
