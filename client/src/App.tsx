@@ -6,8 +6,10 @@ import DashboardPage from './pages/dashboard'
 import CreateResumePage from './pages/resume/create'
 import ResumesPage from './pages/dashboard/resumes'
 import EditResumePage from './pages/resume/edit'
-import PortfoliosPage from './pages/dashboard/portfolios'
 import SettingsPage from './pages/dashboard/settings'
+import PortfoliosPage from './pages/dashboard/portfolios'
+import PortfolioViewPage from './pages/dashboard/portfolio-view'
+import NewPortfolioPage from "./pages/dashboard/new-portfolio";
 
 import LandingPage from './pages/landing'
 
@@ -48,6 +50,8 @@ function App() {
           <Route path="resumes/:id/edit" element={<EditResumePage />} />
           <Route path="resumes/new" element={<CreateResumePage />} />
           <Route path="portfolios" element={<PortfoliosPage />} />
+          <Route path="portfolios/new" element={<NewPortfolioPage />} />
+          <Route path="portfolios/:id" element={<PortfolioViewPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>

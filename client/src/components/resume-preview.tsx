@@ -90,49 +90,60 @@ export function ResumePreview({ open, onClose, data }: ResumePreviewProps) {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-7xl h-[90vh] flex flex-col p-0 gap-0 duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-bottom-12 data-[state=open]:slide-in-from-bottom-12 shadow-2xl border-none ring-1 ring-gray-200/50 [&>button]:hidden">
-                <DialogHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0 bg-muted/30 transition-all duration-300 ease-in-out">
-                    <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:scale-110 transition-transform duration-200">
-                            <X className="w-4 h-4" />
+            <DialogContent className="max-w-7xl w-[95vw] h-[90vh] flex flex-col p-0 gap-0 duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-bottom-12 data-[state=open]:slide-in-from-bottom-12 shadow-2xl border-none ring-1 ring-gray-200/50 [&>button]:hidden">
+                <DialogHeader className="p-3 md:p-4 border-b flex flex-row items-center justify-between space-y-0 bg-muted/30 shrink-0">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                        <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:scale-110 transition-transform duration-200 shrink-0">
+                            <X className="w-5 h-5" />
                         </Button>
-                        <DialogTitle className="animate-fade-in line-clamp-1 text-left">Resume Preview</DialogTitle>
+                        <DialogTitle className="truncate font-semibold text-sm md:text-lg">Resume Preview</DialogTitle>
                     </div>
-                    <div className="flex items-center gap-2">
-                        {/* Zoom Toggle (Mobile Only or Always?) Useful for both but critical for mobile */}
-                        <Button variant="outline" size="icon" onClick={toggleZoom} className="h-8 w-8 mr-1 md:hidden">
+                    <div className="flex items-center gap-1 md:gap-2 shrink-0">
+                        {/* Mobile Zoom Toggle */}
+                        <Button variant="outline" size="icon" onClick={toggleZoom} className="h-8 w-8 md:hidden shrink-0">
                             {isFitToScreen ? <ZoomIn className="w-4 h-4" /> : <ZoomOut className="w-4 h-4" />}
                         </Button>
 
-                        <div className="flex flex-col sm:flex-row gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handlePrint()} className="hover:scale-105 transition-transform duration-200 w-full sm:w-auto justify-start sm:justify-center">
+                        <div className="flex items-center gap-1 sm:gap-2">
+                            {/* Desktop buttons often hidden on very small screens if we don't have space? No, download is critical. */}
+                            {/* Icon only on mobile */}
+                            <Button variant="outline" size="sm" onClick={() => handlePrint()} className="hidden sm:flex hover:scale-105 transition-transform duration-200">
                                 <Printer className="w-4 h-4 mr-2" />
-                                <span>Print / Save</span>
+                                <span>Print</span>
                             </Button>
-                            <Button variant="default" size="sm" onClick={() => handlePrint()} className="hover:scale-105 transition-transform duration-200 w-full sm:w-auto justify-start sm:justify-center">
-                                <Download className="w-4 h-4 mr-2" />
-                                <span>Download PDF</span>
+                            <Button variant="default" size="sm" onClick={() => handlePrint()} className="hover:scale-105 transition-transform duration-200 px-3">
+                                <Download className="w-4 h-4 sm:mr-2" />
+                                <span className="hidden sm:inline">Download PDF</span>
                             </Button>
                         </div>
                     </div>
                 </DialogHeader>
 
-                <div className="flex-1 overflow-auto bg-gray-100 p-4 md:p-8">
-                    {/* Printable Area - Wrapper for scaling if needed */}
+                <div className="flex-1 overflow-auto bg-gray-100/50 p-4 md:p-8 relative">
+                    {/* Floating Zoom Controls for Desktop */}
+                    <div className="hidden md:flex absolute bottom-6 right-8 gap-2 bg-white/90 backdrop-blur border shadow-lg p-1.5 rounded-full z-10 transition-opacity hover:opacity-100 opacity-50">
+                        <Button variant="ghost" size="icon" onClick={() => setScale(s => Math.max(0.5, s - 0.1))} className="h-8 w-8 rounded-full">
+                            <ZoomOut className="w-4 h-4" />
+                        </Button>
+                        <span className="text-xs font-mono w-12 text-center flex items-center justify-center">{Math.round(scale * 100)}%</span>
+                        <Button variant="ghost" size="icon" onClick={() => setScale(s => Math.min(2, s + 0.1))} className="h-8 w-8 rounded-full">
+                            <ZoomIn className="w-4 h-4" />
+                        </Button>
+                        <div className="w-px h-4 bg-border my-auto mx-1" />
+                        <Button variant="ghost" size="sm" onClick={toggleZoom} className="h-8 px-3 rounded-full text-xs">
+                            {isFitToScreen ? "100%" : "Fit"}
+                        </Button>
+                    </div>
+
                     <div
-                        className={`transition-all duration-500 ease-in-out origin-top-left ${isContentVisible ? 'opacity-100' : 'opacity-0'} transform ${isContentVisible ? 'translate-y-0' : 'translate-y-4'}`}
+                        className={`transition-all duration-300 ease-out origin-top-center shadow-2xl mx-auto ${isContentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                         style={{
                             transform: `scale(${scale})`,
-                            transformOrigin: 'top center', // Center feels better for fit-screen? or top left? Usually Top Left if we want to scroll. But for fit-screen, Top Center looks nice.
-                            // If scale < 1, width decreases. We need to ensure parent aligns it?
-                            // Let's use 'top left' if we can scroll, or 'top center' if we want it centered.
-                            // Let's stick to 'top left' and use margin-auto on parent flexible?
                             width: isFitToScreen ? 'fit-content' : '100%',
-                            height: isFitToScreen ? 'fit-content' : 'auto',
-                            margin: '0 auto'
+                            maxWidth: isFitToScreen ? '100%' : '210mm',
                         }}
                     >
-                        <div ref={componentRef}>
+                        <div ref={componentRef} className="bg-white min-h-[297mm]">
                             {renderTemplate()}
                         </div>
                     </div>

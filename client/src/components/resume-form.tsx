@@ -97,7 +97,9 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
 
 
             if (!response.ok) {
-                throw new Error("Failed to save resume");
+                const errorData = await response.json().catch(() => ({}));
+                console.error("Server Error Response:", errorData);
+                throw new Error(errorData.error || `Failed to save resume: ${response.statusText}`);
             }
 
             const result = await response.json();
@@ -783,19 +785,6 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                                     <Button type="button" variant="outline" onClick={() => setShowPreview(true)} className="w-full sm:w-auto order-2 sm:order-1">
                                         <Eye className="w-4 h-4 mr-2" /> Preview
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={async () => {
-                                            // const savedId = resumeId || (isSaved ? "temp-id" : null); // In real app, we need the ID. 
-                                            // If not saved, we can't generate easily without passing content.
-                                            // Let's just navigate to portfolios page for now or show value prop.
-                                            navigate("/dashboard/portfolios");
-                                        }}
-                                        className="w-full sm:w-auto order-2 sm:order-1 hidden md:flex"
-                                    >
-                                        <Wand2 className="w-4 h-4 mr-2" /> Portfolio
                                     </Button>
                                     <Button type="submit" className="w-full sm:w-auto order-1 sm:order-2" disabled={form.formState.isSubmitting}>
                                         {form.formState.isSubmitting ? (

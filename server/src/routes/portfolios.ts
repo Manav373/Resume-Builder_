@@ -23,6 +23,14 @@ router.get("/", async (req, res) => {
         const portfolios = await prisma.portfolio.findMany({
             where: { userId },
             orderBy: { updatedAt: "desc" },
+            select: {
+                id: true,
+                title: true,
+                updatedAt: true,
+                createdAt: true,
+                userId: true,
+                // content: false // Exclude heavy content
+            }
         });
 
         res.json(portfolios);
@@ -82,9 +90,39 @@ router.delete("/:id", async (req, res) => {
             where: { id },
         });
         res.json({ message: "Portfolio deleted successfully" });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error deleting portfolio:", error);
+        // P2025: Record to delete does not exist.
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: "Portfolio not found or already deleted" });
+        }
         res.status(500).json({ error: "Failed to delete portfolio" });
+    }
+});
+
+// PATCH /api/portfolios/:id - Update a portfolio
+router.patch("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title } = req.body;
+
+        if (!title || typeof title !== 'string' || title.trim().length === 0) {
+            return res.status(400).json({ error: "Title is required" });
+        }
+
+        const portfolio = await prisma.portfolio.update({
+            where: { id },
+            data: { title: title.trim() },
+        });
+
+        res.json(portfolio);
+    } catch (error: any) {
+        console.error("Error updating portfolio:", error);
+        // P2025: Record to update does not exist.
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: "Portfolio not found" });
+        }
+        res.status(500).json({ error: "Failed to update portfolio" });
     }
 });
 

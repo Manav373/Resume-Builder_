@@ -1,4 +1,4 @@
-import { Plus, FileText, Loader2, Trash2, Eye, Pencil } from "lucide-react";
+import { Plus, FileText, Loader2, Trash2, Eye, Pencil, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ export default function ResumesPage() {
     const navigate = useNavigate();
     const [previewData, setPreviewData] = useState<any>(null);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [generatingId, setGeneratingId] = useState<string | null>(null);
 
     // const queryClient = useQueryClient(); // Unused
 
@@ -50,6 +51,63 @@ export default function ResumesPage() {
         } catch (error) {
             console.error("Delete Resume Error:", error);
             toast.error("Failed to delete resume");
+        }
+    };
+
+    const handleGeneratePortfolio = async (e: React.MouseEvent, resume: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setGeneratingId(resume.id);
+
+        try {
+            const loadingToast = toast.loading("Generating AI Portfolio... This may take a minute.");
+
+            // 1. Generate Portfolio HTML with AI
+            const genRes = await fetch(`${API_URL}/api/ai/generate-portfolio`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ resumeData: resume.content }),
+            });
+
+            if (!genRes.ok) {
+                const errorData = await genRes.json();
+                throw new Error(errorData.error || "Failed to generate portfolio");
+            }
+
+            const { html } = await genRes.json();
+
+            // 2. Save Portfolio to DB
+            const saveRes = await fetch(`${API_URL}/api/portfolios`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: user?.id,
+                    title: `${resume.title || "My"} Portfolio`,
+                    content: { html },
+                }),
+            });
+
+            if (!saveRes.ok) throw new Error("Failed to save portfolio");
+
+            const newPortfolio = await saveRes.json();
+
+            toast.dismiss(loadingToast);
+            toast.success("Portfolio generated!", {
+                action: {
+                    label: "View",
+                    onClick: () => navigate(`/dashboard/portfolios/${newPortfolio.id}`)
+                }
+            });
+
+            // Optional: Redirect immediately
+            // navigate(`/dashboard/portfolios/${newPortfolio.id}`);
+
+        } catch (error: any) {
+            console.error("Portfolio Generation Error:", error);
+            toast.error(error.message || "Failed to generate portfolio");
+            toast.dismiss();
+        } finally {
+            setGeneratingId(null);
         }
     };
 
@@ -104,6 +162,20 @@ export default function ResumesPage() {
                                 className="hover:scale-[1.02] transition-transform duration-300 shadow-md hover:shadow-xl border-dashed hover:border-solid"
                                 action={
                                     <div className="flex items-center gap-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-muted-foreground hover:text-blue-500 shrink-0 relative z-10 transition-transform hover:scale-110"
+                                            onClick={(e) => handleGeneratePortfolio(e, resume)}
+                                            title="Generate AI Portfolio"
+                                            disabled={generatingId === resume.id}
+                                        >
+                                            {generatingId === resume.id ? (
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                            ) : (
+                                                <Sparkles className="w-4 h-4" />
+                                            )}
+                                        </Button>
                                         <Button
                                             variant="ghost"
                                             size="icon"

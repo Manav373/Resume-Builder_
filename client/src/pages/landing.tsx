@@ -47,26 +47,27 @@ export default function LandingPage() {
             <ParticlesBackground />
 
             {/* Header */}
-            <header className="px-6 lg:px-8 h-16 flex items-center border-b border-border/40 sticky top-0 bg-background/60 backdrop-blur-xl z-50">
+            <header className="px-4 md:px-6 lg:px-8 h-16 flex items-center border-b border-border/40 sticky top-0 bg-background/60 backdrop-blur-xl z-50 transition-all duration-300">
                 <Link className="flex items-center justify-center font-bold text-xl gap-2 group" to="/">
                     <div className="p-1.5 bg-primary rounded-lg group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-primary/25">
                         <FileText className="w-5 h-5 text-primary-foreground" />
                     </div>
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 group-hover:to-primary transition-all">Resume Builder AI</span>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 group-hover:to-primary transition-all hidden sm:inline-block">Resume Builder AI</span>
+                    <span className="font-bold sm:hidden">AI Resume</span>
                 </Link>
-                <nav className="ml-auto flex gap-4 sm:gap-6">
-                    <div className="flex items-center gap-4">
+                <nav className="ml-auto flex gap-3 sm:gap-6 items-center">
+                    <div className="flex items-center gap-2 sm:gap-4">
                         <AppSignedOut>
                             <AppSignInButton>
-                                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Sign In</Button>
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Sign In</Button>
                             </AppSignInButton>
                         </AppSignedOut>
                         <AppSignedIn>
                             <UserButtonComponent />
                         </AppSignedIn>
                         <ModeToggle />
-                        <Link to="/dashboard/resumes/new">
-                            <Button size="sm" className="hidden sm:flex shadow-lg shadow-primary/20">Get Started</Button>
+                        <Link to="/dashboard/resumes/new" className="hidden sm:block">
+                            <Button size="sm" className="shadow-lg shadow-primary/20">Get Started</Button>
                         </Link>
                     </div>
                 </nav>
@@ -92,7 +93,7 @@ export default function LandingPage() {
                                 </motion.div>
 
                                 <h1
-                                    className="text-4xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl pb-2"
+                                    className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight pb-2 leading-[1.1]"
                                 >
                                     <motion.span
                                         initial={{ opacity: 0, scale: 0.9, y: 30, filter: "blur(10px)" }}
@@ -102,7 +103,7 @@ export default function LandingPage() {
                                     >
                                         Craft Your
                                     </motion.span>
-                                    <br className="hidden md:block" />
+                                    <br className="hidden md:block" />{" "}
                                     <motion.span
                                         initial={{ opacity: 0, scale: 0.9, y: 30, filter: "blur(10px)" }}
                                         animate={{
@@ -133,7 +134,7 @@ export default function LandingPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.2, duration: 0.5 }}
-                                    className="mx-auto max-w-2xl text-muted-foreground text-lg md:text-xl leading-relaxed"
+                                    className="mx-auto max-w-2xl text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed px-4"
                                 >
                                     Stop wrestling with formatting. Let our AI writer help you describe your achievements and build a professional resume in minutes.
                                 </motion.p>
@@ -149,7 +150,7 @@ export default function LandingPage() {
 
                                 <AppSignedOut>
                                     <AppSignInButton>
-                                        <GlowingButton className="w-full sm:w-auto h-14 px-10 text-lg shadow-xl">
+                                        <GlowingButton className="w-full sm:w-auto h-12 md:h-14 px-8 md:px-10 text-base md:text-lg shadow-xl">
                                             Sign In
                                         </GlowingButton>
                                     </AppSignInButton>
