@@ -7,19 +7,35 @@ const router = Router();
 // Global index for Round-Robin rotation
 let currentKeyIndex = 0;
 
+// Helper to aggregate all available API keys
+const getAllApiKeys = () => {
+    const keys: string[] = [];
+
+    // 1. Check primary key (comma-separated support)
+    if (process.env.GROQ_API_KEY) {
+        keys.push(...process.env.GROQ_API_KEY.split(","));
+    }
+
+    // 2. Check indexed keys (GROQ_API_KEY_1, GROQ_API_KEY_2, etc.)
+    // scan reasonable range or all env vars
+    Object.keys(process.env).forEach(key => {
+        if (key.match(/^GROQ_API_KEY_\d+$/)) {
+            const val = process.env[key];
+            if (val) keys.push(val);
+        }
+    });
+
+    // Sanitize
+    return keys.map(k => k.replace(/['"\s]/g, "")).filter(k => k.length > 0);
+};
+
 const getGroqClient = () => {
-    let rawKeys = process.env.GROQ_API_KEY || "";
+    const keys = getAllApiKeys();
 
-    // Sanitize: Remove all quotes (single/double) and whitespace
-    rawKeys = rawKeys.replace(/['"\s]/g, "");
-
-    if (!rawKeys) {
+    if (keys.length === 0) {
         console.warn("GROQ_API_KEY is not set. AI generation will fail.");
         return null;
     }
-
-    // Support multiple keys separated by comma for rotation
-    const keys = rawKeys.split(",").filter(k => k.length > 0);
 
     // Round-Robin Selection
     const apiKey = keys[currentKeyIndex % keys.length];
@@ -35,6 +51,24 @@ const getGroqClient = () => {
 const generateSchema = z.object({
     jobTitle: z.string(),
     currentSkills: z.array(z.string()).optional(),
+});
+
+router.get("/test", async (req, res) => {
+    const rawKeys = process.env.GROQ_API_KEY || "";
+    const keys = rawKeys.split(",").filter(k => k.length > 0);
+
+    const keyStatus = keys.map(k => ({
+        validPrefix: k.startsWith("gsk_"),
+        length: k.length
+    }));
+
+    res.json({
+        status: keys.length > 0 ? "Configured" : "Missing API Key",
+        provider: "Groq",
+        keyCount: keys.length,
+        keys: keyStatus,
+        model: process.env.GROQ_MODEL || "Default"
+    });
 });
 
 router.post("/generate", async (req, res) => {
