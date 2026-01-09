@@ -369,6 +369,7 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                         <div className="space-y-2">
                                             <Label>Email</Label>
                                             <Input {...form.register("personalInfo.email")} placeholder="john@example.com" />
+                                            {form.formState.errors.personalInfo?.email && <p className="text-sm text-red-500">{form.formState.errors.personalInfo.email.message}</p>}
                                         </div>
                                         <div className="space-y-2">
                                             <Label>Phone</Label>
@@ -464,10 +465,12 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                                     <div className="space-y-2">
                                                         <Label>Company</Label>
                                                         <Input {...form.register(`experience.${index}.company`)} placeholder="Company Name" />
+                                                        {form.formState.errors.experience?.[index]?.company && <p className="text-xs text-red-500">{form.formState.errors.experience[index]?.company?.message}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Position</Label>
                                                         <Input {...form.register(`experience.${index}.position`)} placeholder="Job Title" />
+                                                        {form.formState.errors.experience?.[index]?.position && <p className="text-xs text-red-500">{form.formState.errors.experience[index]?.position?.message}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Start Date</Label>
@@ -519,10 +522,12 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                                     <div className="space-y-2">
                                                         <Label>Name</Label>
                                                         <Input {...form.register(`certifications.${index}.name`)} placeholder="Certification Name" />
+                                                        {form.formState.errors.certifications?.[index]?.name && <p className="text-xs text-red-500">{form.formState.errors.certifications[index]?.name?.message}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Issuer</Label>
                                                         <Input {...form.register(`certifications.${index}.issuer`)} placeholder="Issuing Organization" />
+                                                        {form.formState.errors.certifications?.[index]?.issuer && <p className="text-xs text-red-500">{form.formState.errors.certifications[index]?.issuer?.message}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Date</Label>
@@ -570,6 +575,7 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                                     <div className="space-y-2">
                                                         <Label>Project Name</Label>
                                                         <Input {...form.register(`projects.${index}.name`)} placeholder="Project Name" />
+                                                        {form.formState.errors.projects?.[index]?.name && <p className="text-xs text-red-500">{form.formState.errors.projects[index]?.name?.message}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Link (Optional)</Label>
@@ -586,6 +592,42 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                                     <div className="space-y-2 col-span-2">
                                                         <Label>Description</Label>
                                                         <Textarea {...form.register(`projects.${index}.description`)} placeholder="Describe the project..." />
+                                                    </div>
+                                                    <div className="space-y-2 col-span-2">
+                                                        <Label>Technologies</Label>
+                                                        <Input
+                                                            placeholder="Add tech (e.g. React) and press Enter"
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === "Enter") {
+                                                                    e.preventDefault();
+                                                                    const val = e.currentTarget.value.trim();
+                                                                    if (val) {
+                                                                        const current = form.getValues(`projects.${index}.technologies`) || [];
+                                                                        if (!current.includes(val)) {
+                                                                            form.setValue(`projects.${index}.technologies`, [...current, val]);
+                                                                        }
+                                                                        e.currentTarget.value = "";
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                        <div className="flex flex-wrap gap-2 mt-2">
+                                                            {form.watch(`projects.${index}.technologies`)?.map((tech, tIndex) => (
+                                                                <div key={tIndex} className="bg-slate-100 px-2 py-1 rounded text-xs flex items-center gap-1 border border-slate-200">
+                                                                    {tech}
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const current = form.getValues(`projects.${index}.technologies`) || [];
+                                                                            form.setValue(`projects.${index}.technologies`, current.filter(t => t !== tech));
+                                                                        }}
+                                                                        className="hover:text-red-500 font-bold px-1"
+                                                                    >
+                                                                        &times;
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -625,10 +667,12 @@ export default function ResumeForm({ initialData, resumeId }: ResumeFormProps = 
                                                     <div className="space-y-2">
                                                         <Label>School</Label>
                                                         <Input {...form.register(`education.${index}.school`)} placeholder="University Name" />
+                                                        {form.formState.errors.education?.[index]?.school && <p className="text-xs text-red-500">{form.formState.errors.education[index]?.school?.message}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Degree</Label>
                                                         <Input {...form.register(`education.${index}.degree`)} placeholder="Degree" />
+                                                        {form.formState.errors.education?.[index]?.degree && <p className="text-xs text-red-500">{form.formState.errors.education[index]?.degree?.message}</p>}
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Start Date</Label>
