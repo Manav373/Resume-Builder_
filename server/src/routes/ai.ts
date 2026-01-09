@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const router = Router();
 
-// Global index for Round-Robin rotation
+// Global index for initial load balancing
 let currentKeyIndex = 0;
 
 // Helper to aggregate all available API keys
@@ -17,7 +17,6 @@ const getAllApiKeys = () => {
     }
 
     // 2. Check indexed keys (GROQ_API_KEY_1, GROQ_API_KEY_2, etc.)
-    // scan reasonable range or all env vars
     Object.keys(process.env).forEach(key => {
         if (key.match(/^GROQ_API_KEY_\d+$/)) {
             const val = process.env[key];
@@ -29,24 +28,51 @@ const getAllApiKeys = () => {
     return keys.map(k => k.replace(/['"\s]/g, "")).filter(k => k.length > 0);
 };
 
-const getGroqClient = () => {
+// Retry Wrapper for Groq calls
+async function executeGroqRequest(callback: (groq: Groq) => Promise<any>) {
     const keys = getAllApiKeys();
+    if (keys.length === 0) throw new Error("No API Keys configured");
 
-    if (keys.length === 0) {
-        console.warn("GROQ_API_KEY is not set. AI generation will fail.");
-        return null;
+    let lastError = null;
+
+    // Try starting from current index, wrapping around
+    for (let i = 0; i < keys.length; i++) {
+        const keyIndex = (currentKeyIndex + i) % keys.length;
+        const apiKey = keys[keyIndex];
+
+        try {
+            // console.log(`[AI] Attempting with Key #${keyIndex + 1} (${apiKey.substring(0, 8)}...)`);
+            const groq = new Groq({ apiKey });
+            const result = await callback(groq);
+
+            // Success! Update global index to next one for load balancing
+            currentKeyIndex = (keyIndex + 1) % keys.length;
+            return result;
+
+        } catch (error: any) {
+            const maskedKey = apiKey.substring(0, 8) + "...";
+            console.warn(`[AI] Key ${maskedKey} failed:`, error.message || error);
+            lastError = error;
+
+            // Check if error is retryable
+            const code = error?.error?.code || error?.code;
+            const status = error?.status || 0;
+
+            const isRetryable =
+                ['invalid_api_key', 'rate_limit_exceeded', 'insufficient_quota'].includes(code) ||
+                status >= 500;
+
+            if (!isRetryable) {
+                // If it's a prompt error (400), don't retry other keys
+                throw error;
+            }
+
+            // Continue to next key...
+        }
     }
 
-    // Round-Robin Selection
-    const apiKey = keys[currentKeyIndex % keys.length];
-    currentKeyIndex++;
-
-    // Debugging: Log the masked key
-    const maskedKey = apiKey.substring(0, 8) + "...";
-    console.log(`[AI] Using Key #${(currentKeyIndex % keys.length) + 1}/${keys.length} (${maskedKey})`);
-
-    return new Groq({ apiKey });
-};
+    throw lastError || new Error("All API keys failed");
+}
 
 const generateSchema = z.object({
     jobTitle: z.string(),
@@ -63,7 +89,7 @@ router.get("/test", async (req, res) => {
 
     res.json({
         status: keys.length > 0 ? "Configured" : "Missing API Key",
-        provider: "Groq",
+        provider: "Groq (Round Robin Enabled)",
         keyCount: keys.length,
         keys: keyStatus,
         model: process.env.GROQ_MODEL || "Default"
@@ -73,7 +99,6 @@ router.get("/test", async (req, res) => {
 router.post("/generate", async (req, res) => {
     try {
         console.log(`[AI] Generating content for: ${req.body.jobTitle}`);
-        console.log("[AI] Key check:", process.env.GROQ_API_KEY ? "Present" : "Missing");
         const { jobTitle, currentSkills } = generateSchema.parse(req.body);
 
         const prompt = `You are an expert resume writer. Generate a professional summary and a list of 5 key skills for a "${jobTitle}".
@@ -81,15 +106,12 @@ router.post("/generate", async (req, res) => {
     CRITICAL: Do NOT start with "Results-driven", "Passionate", "Seasoned", "Motivated", or other clichés. Be direct, modern, and specific.
     Return JSON format: { "summary": "string", "skills": ["string"] }`;
 
-        const groq = getGroqClient();
-        if (!groq) {
-            throw new Error("AI Service is not configured (missing API Key)");
-        }
-
-        const completion = await groq.chat.completions.create({
-            messages: [{ role: "user", content: prompt }],
-            model: process.env.GROQ_MODEL || "llama-3.1-8b-instant", // Default to fastest model
-            response_format: { type: "json_object" },
+        const completion = await executeGroqRequest(async (groq) => {
+            return groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: process.env.GROQ_MODEL || "llama-3.1-8b-instant",
+                response_format: { type: "json_object" },
+            });
         });
 
         const content = completion.choices[0]?.message?.content;
@@ -98,19 +120,9 @@ router.post("/generate", async (req, res) => {
         res.json(JSON.parse(content));
     } catch (error: any) {
         console.error("AI Generation Error:", error);
-
-        let errorMessage = "Failed to generate content";
-
-        if (error?.error?.code === "invalid_api_key") {
-            errorMessage = "Invalid GROQ_API_KEY. Please check your server .env file.";
-        } else if (error?.message) {
-            errorMessage = error.message;
-        }
-
-        // Return the actual error to the client so the user knows why it failed
         res.status(500).json({
-            error: errorMessage,
-            details: "Real AI Generation Failed. See server logs."
+            error: error.message || "Failed to generate content",
+            details: "All API keys failed or service is down."
         });
     }
 });
@@ -127,24 +139,18 @@ router.post("/generate-portfolio", async (req, res) => {
         console.log("[AI] Generating portfolio website");
         const { resumeData, theme = 'modern', palette = 'violet', customPrompt } = portfolioSchema.parse(req.body);
 
-        // Sanitize data strategy: 
-        // We replace the massive base64 photo with a token so the AI knows where to put the image.
-        // Then we swap it back after generation.
         const sanitizedData = JSON.parse(JSON.stringify(resumeData));
         if (sanitizedData.personalInfo?.photoUrl) {
             sanitizedData.personalInfo.photoUrl = "__USER_PHOTO__";
         }
 
-        // Palette Config
         const paletteColors: Record<string, string> = {
             violet: "Neon Violet (`violet-500`) mixed with Cyan (`cyan-400`)",
             sunset: "Sunset Orange (`orange-500`) mixed with Rose (`rose-500`)",
             ocean: "Deep Blue (`blue-600`) mixed with Teal (`teal-400`)",
             emerald: "Emerald Green (`emerald-500`) mixed with Lime (`lime-400`)"
         };
-        const selectedColors = paletteColors[palette] || paletteColors['violet'];
 
-        // Theme-Specific Architectures
         const themeArchitectures: Record<string, string> = {
             modern: `
                     **LAYOUT: BENTO GRID WITH PARTICLES & DOCK**
@@ -395,14 +401,11 @@ router.post("/generate-portfolio", async (req, res) => {
       </html>
     `;
 
-        const groq = getGroqClient();
-        if (!groq) {
-            throw new Error("AI Service is not configured (missing API Key)");
-        }
-
-        const completion = await groq.chat.completions.create({
-            messages: [{ role: "user", content: prompt }],
-            model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile", // Reverting to 3.3 now that we have multiple keys
+        const completion = await executeGroqRequest(async (groq) => {
+            return groq.chat.completions.create({
+                messages: [{ role: "user", content: prompt }],
+                model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile", // Reverting to 3.3 now that we have multiple keys
+            });
         });
 
         let content = completion.choices[0]?.message?.content;
@@ -415,8 +418,6 @@ router.post("/generate-portfolio", async (req, res) => {
         if (resumeData.personalInfo?.photoUrl) {
             // Replace the token with the actual base64/URL
             content = content.replace(/__USER_PHOTO__/g, resumeData.personalInfo.photoUrl);
-            // Also serve as fallback if AI missed the token but we want to force it?
-            // No, regex replace on the specific token is safest.
         }
 
         res.json({ html: content });
@@ -438,4 +439,3 @@ router.post("/generate-portfolio", async (req, res) => {
 });
 
 export default router;
-
