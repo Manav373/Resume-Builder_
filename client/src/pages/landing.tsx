@@ -10,8 +10,29 @@ import { ParticlesBackground } from "@/components/ui/particles-background";
 import { ModeToggle } from "@/components/mode-toggle";
 import { GlowingButton } from "@/components/ui/glowing-button";
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 export default function LandingPage() {
+    return (
+        <>
+            <Helmet>
+                <title>AI Resume Builder - Create Professional Resumes in Minutes</title>
+                <meta name="description" content="Build your perfect resume with AI. ATS-friendly templates, career-specific suggestions, and instant PDF download. Join thousands of professionals landing their dream jobs." />
+                <meta name="keywords" content="resume builder, ai resume, cv maker, professional resume, ats resume, free resume builder" />
+                <meta property="og:title" content="AI Resume Builder - Craft Your Dream Career" />
+                <meta property="og:description" content="Stop wrestling with formatting. Let our AI help you build a professional resume in minutes." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://resume-builder-ai.vercel.app/" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="AI Resume Builder" />
+                <meta name="twitter:description" content="Build your perfect resume with AI." />
+            </Helmet>
+            <LandingContent />
+        </>
+    );
+}
+
+function LandingContent() {
     const { scrollYProgress } = useScroll();
     const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
     const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
