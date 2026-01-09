@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserButtonComponent } from "@/components/auth-provider";
-import { LayoutDashboard, FileText, Settings, Menu, X, Globe, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Settings, Menu, X, Globe } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
