@@ -25,7 +25,10 @@ export default function ResumesPage() {
         queryFn: async () => {
             if (!user?.id) return [];
             const res = await fetch(`${API_URL}/api/resumes?userId=${user.id}`);
-            if (!res.ok) throw new Error("Failed to fetch resumes");
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(`Server Error: ${res.status} ${res.statusText} - ${text.substring(0, 100)}`);
+            }
             return res.json();
         },
         enabled: !!user?.id,
@@ -112,7 +115,14 @@ export default function ResumesPage() {
     };
 
     if (error) {
-        return <div className="p-8 text-center text-red-500">Error loading resumes</div>;
+        return (
+            <div className="p-8 text-center text-red-500 bg-red-50 rounded-lg border border-red-100 m-4">
+                <h3 className="font-bold">Error loading resumes</h3>
+                <p className="font-mono text-sm mt-2">{(error as Error).message}</p>
+                <p className="text-xs text-muted-foreground mt-4">Check Vercel logs or database connection.</p>
+                <Button onClick={() => refetch()} variant="outline" className="mt-4">Try Again</Button>
+            </div>
+        );
     }
 
     return (
