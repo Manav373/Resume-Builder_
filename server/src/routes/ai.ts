@@ -356,7 +356,7 @@ router.post("/generate-portfolio", async (req, res) => {
         const completion = await executeGroqRequest(async (groq) => {
             return groq.chat.completions.create({
                 messages: [{ role: "user", content: prompt }],
-                model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile", // Reverting to 3.3 now that we have multiple keys
+                model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
             });
         });
 
