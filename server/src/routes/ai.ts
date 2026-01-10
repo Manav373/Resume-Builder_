@@ -6,25 +6,74 @@ const router = Router();
 
 
 
-// Helper to get the single available API key
-const getApiKey = () => {
-    const key = process.env.GROQ_API_KEY;
-    if (!key) return null;
-    return key.replace(/['"\s]/g, "");
+// Global index for initial load balancing
+let currentKeyIndex = 0;
+
+// Helper to aggregate all available API keys
+const getAllApiKeys = () => {
+    const keys: string[] = [];
+
+    // 1. Check primary key (comma-separated support)
+    if (process.env.GROQ_API_KEY) {
+        keys.push(...process.env.GROQ_API_KEY.split(","));
+    }
+
+    // 2. Check indexed keys (GROQ_API_KEY_1, GROQ_API_KEY_2, etc.)
+    Object.keys(process.env).forEach(key => {
+        if (key.match(/^GROQ_API_KEY_\d+$/)) {
+            const val = process.env[key];
+            if (val) keys.push(val);
+        }
+    });
+
+    // Sanitize
+    return keys.map(k => k.replace(/['"\s]/g, "")).filter(k => k.length > 0);
 };
 
-// Wrapper for Groq calls
+// Retry Wrapper for Groq calls
 async function executeGroqRequest(callback: (groq: Groq) => Promise<any>) {
-    const apiKey = getApiKey();
-    if (!apiKey) throw new Error("GROQ_API_KEY is not configured");
+    const keys = getAllApiKeys();
+    if (keys.length === 0) throw new Error("No API Keys configured");
 
-    try {
-        const groq = new Groq({ apiKey });
-        return await callback(groq);
-    } catch (error: any) {
-        console.warn(`[AI] Request failed:`, error.message || error);
-        throw error;
+    let lastError = null;
+
+    // Try starting from current index, wrapping around
+    for (let i = 0; i < keys.length; i++) {
+        const keyIndex = (currentKeyIndex + i) % keys.length;
+        const apiKey = keys[keyIndex];
+
+        try {
+            // console.log(`[AI] Attempting with Key #${keyIndex + 1} (${apiKey.substring(0, 8)}...)`);
+            const groq = new Groq({ apiKey });
+            const result = await callback(groq);
+
+            // Success! Update global index to next one for load balancing
+            currentKeyIndex = (keyIndex + 1) % keys.length;
+            return result;
+
+        } catch (error: any) {
+            const maskedKey = apiKey.substring(0, 8) + "...";
+            console.warn(`[AI] Key ${maskedKey} failed:`, error.message || error);
+            lastError = error;
+
+            // Check if error is retryable
+            const code = error?.error?.code || error?.code;
+            const status = error?.status || 0;
+
+            const isRetryable =
+                ['invalid_api_key', 'rate_limit_exceeded', 'insufficient_quota'].includes(code) ||
+                status >= 500;
+
+            if (!isRetryable) {
+                // If it's a prompt error (400), don't retry other keys
+                throw error;
+            }
+
+            // Continue to next key...
+        }
     }
+
+    throw lastError || new Error("All API keys failed");
 }
 
 const generateSchema = z.object({
@@ -33,12 +82,18 @@ const generateSchema = z.object({
 });
 
 router.get("/test", async (req, res) => {
-    const key = getApiKey();
+    const keys = getAllApiKeys();
+
+    const keyStatus = keys.map(k => ({
+        validPrefix: k.startsWith("gsk_"),
+        length: k.length
+    }));
 
     res.json({
-        status: key ? "Configured" : "Missing API Key",
-        provider: "Groq (Single Key)",
-        keyConfigured: !!key,
+        status: keys.length > 0 ? "Configured" : "Missing API Key",
+        provider: "Groq (Round Robin Enabled)",
+        keyCount: keys.length,
+        keys: keyStatus,
         model: process.env.GROQ_MODEL || "Default"
     });
 });
@@ -73,7 +128,7 @@ router.post("/generate", async (req, res) => {
         console.error("AI Generation Error:", error);
         res.status(500).json({
             error: error.message || "Failed to generate content",
-            details: "API key failed or service is down. Check server logs."
+            details: "All API keys failed or service is down. Check server logs."
         });
     }
 });
