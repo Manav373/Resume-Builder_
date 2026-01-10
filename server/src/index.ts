@@ -47,11 +47,7 @@ const startServer = async () => {
 };
 
 // Only start the server if this file is run directly (not imported)
-// @ts-ignore
-if (import.meta.url === `file://${process.argv[1]}`) {
-    startServer();
-} else if (require.main === module) {
-    // Fallback for CommonJS if type="module" isn't fully enforced or mixed
+if (require.main === module) {
     startServer();
 }
 
