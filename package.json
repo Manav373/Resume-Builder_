@@ -12,6 +12,7 @@
         "@clerk/clerk-sdk-node": "^4.13.23",
         "@prisma/client": "^5.22.0",
         "@prisma/extension-accelerate": "^3.0.1",
+        "compression": "^1.8.1",
         "cors": "^2.8.5",
         "dotenv": "^17.2.3",
         "express": "^5.2.1",
