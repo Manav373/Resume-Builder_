@@ -38,17 +38,22 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 const startServer = async () => {
     try {
-        if (require.main === module) {
-            app.listen(PORT, () => {
-                console.log(`Server is running on port ${PORT}`);
-            });
-        }
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
     } catch (error) {
         console.error("Failed to start server:", error);
     }
 };
 
-startServer();
+// Only start the server if this file is run directly (not imported)
+// @ts-ignore
+if (import.meta.url === `file://${process.argv[1]}`) {
+    startServer();
+} else if (require.main === module) {
+    // Fallback for CommonJS if type="module" isn't fully enforced or mixed
+    startServer();
+}
 
 export default app;
 
