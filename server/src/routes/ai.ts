@@ -98,6 +98,7 @@ router.get("/test", async (req, res) => {
 
 router.post("/generate", async (req, res) => {
     try {
+        const startTime = Date.now();
         console.log(`[AI] Generating content for: ${req.body.jobTitle}`);
         const { jobTitle, currentSkills } = generateSchema.parse(req.body);
 
@@ -117,12 +118,15 @@ router.post("/generate", async (req, res) => {
         const content = completion.choices[0]?.message?.content;
         if (!content) throw new Error("No content generated");
 
+        const duration = Date.now() - startTime;
+        console.log(`[AI] Content generation completed in ${duration}ms`);
+
         res.json(JSON.parse(content));
     } catch (error: any) {
         console.error("AI Generation Error:", error);
         res.status(500).json({
             error: error.message || "Failed to generate content",
-            details: "All API keys failed or service is down."
+            details: "All API keys failed or service is down. Check server logs."
         });
     }
 });
@@ -136,6 +140,7 @@ const portfolioSchema = z.object({
 
 router.post("/generate-portfolio", async (req, res) => {
     try {
+        const startTime = Date.now();
         console.log("[AI] Generating portfolio website");
         const { resumeData, theme = 'modern', palette = 'violet', customPrompt } = portfolioSchema.parse(req.body);
 
@@ -419,6 +424,9 @@ router.post("/generate-portfolio", async (req, res) => {
             // Replace the token with the actual base64/URL
             content = content.replace(/__USER_PHOTO__/g, resumeData.personalInfo.photoUrl);
         }
+
+        const duration = Date.now() - startTime;
+        console.log(`[AI] Portfolio generation completed in ${duration}ms`);
 
         res.json({ html: content });
     } catch (error: any) {
