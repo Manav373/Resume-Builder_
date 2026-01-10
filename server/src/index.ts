@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
     res.send("API is running...");
 });
 
-app.use("/api", routes);
+app.use(["/", "/api"], routes);
 
 
 // Global error handler
