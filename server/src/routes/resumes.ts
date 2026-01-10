@@ -1,63 +1,11 @@
 import { Router } from "express";
-import { prisma } from "../lib/prisma"; // Need to create this
+import { prisma } from "../lib/prisma";
 import { z } from "zod";
+import { resumeSchema } from "../shared/schema";
 
 const router = Router();
 
-// Schema matching frontend types - STRICT SERVER SIDE VALIDATION
-const resumeSchema = z.object({
-    title: z.string().min(1, "Title is required"),
-    personalInfo: z.object({
-        fullName: z.string().optional(),
-        email: z.string().email().optional().or(z.literal("")),
-        phone: z.string().optional(),
-        location: z.string().optional(),
-        website: z.string().optional(),
-        linkedin: z.string().optional(),
-        twitter: z.string().optional(),
-        github: z.string().optional(),
-        instagram: z.string().optional(),
-        photoUrl: z.string().optional(),
-    }),
-    summary: z.string().optional(),
-    experience: z.array(z.object({
-        id: z.string().optional(),
-        company: z.string().optional(),
-        position: z.string().optional(),
-        startDate: z.string().optional().or(z.literal("")),
-        endDate: z.string().optional().or(z.literal("")),
-        current: z.boolean().optional(),
-        location: z.string().optional(),
-        description: z.string().optional(),
-    })).default([]),
-    education: z.array(z.object({
-        id: z.string().optional(),
-        school: z.string().optional(),
-        degree: z.string().optional(),
-        startDate: z.string().optional().or(z.literal("")),
-        endDate: z.string().optional().or(z.literal("")),
-        description: z.string().optional(),
-    })).default([]),
-    skills: z.array(z.string()).default([]),
-    certifications: z.array(z.object({
-        id: z.string().optional(),
-        name: z.string().optional(),
-        issuer: z.string().optional(),
-        date: z.string().optional().or(z.literal("")),
-        link: z.string().optional(),
-    })).default([]),
-    projects: z.array(z.object({
-        id: z.string().optional(),
-        name: z.string().optional(),
-        description: z.string().optional(),
-        link: z.string().optional(),
-        technologies: z.array(z.string()).default([]),
-        startDate: z.string().optional().or(z.literal("")),
-        endDate: z.string().optional().or(z.literal("")),
-    })).default([]),
-});
-
-// Create Resume
+// Schema now imported from shared/schema.ts
 router.post("/", async (req, res) => {
     try {
         // In a real app, get userId from Auth middleware (Clerk)

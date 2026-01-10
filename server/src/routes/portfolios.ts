@@ -1,15 +1,11 @@
 import { Router } from "express";
-import { prisma } from "../lib/prisma"; // Assuming prisma client export location, will verify
+import { prisma } from "../lib/prisma";
 import { z } from "zod";
+import { createPortfolioSchema } from "../shared/schema";
 
 const router = Router();
 
-// Schema for creating a portfolio
-const createPortfolioSchema = z.object({
-    userId: z.string(),
-    title: z.string().min(1, "Title is required"),
-    content: z.record(z.string(), z.any()), // Assuming content is a JSON object with html, etc.
-});
+// Schema definitions now in shared/schema.ts
 
 // GET /api/portfolios - List all portfolios for a user
 router.get("/", async (req, res) => {
