@@ -9,11 +9,29 @@ const router = Router();
 
 
 
-// Helper to get the single available API key
+// Helper to get a random available API key
 const getApiKey = () => {
-    const key = process.env.GROQ_API_KEY;
-    if (!key) return null;
-    return key.replace(/['"\s]/g, "");
+    const keys = [
+        process.env.GROQ_API_KEY,
+        process.env.GROQ_API_KEY_2,
+        process.env.GROQ_API_KEY_3,
+        process.env.GROQ_API_KEY_4
+    ].filter(k => k && k.trim().length > 0);
+
+    if (keys.length === 0) return null;
+
+    const randomIndex = Math.floor(Math.random() * keys.length);
+    const selectedKey = keys[randomIndex];
+
+    // Log which key slot is being used (for debugging load distribution)
+    // We don't log the key itself, just which one it was in the list (1-based index roughly)
+    // Note: The index here is into the *filtered* list, not the original env var name, 
+    // but it confirms rotation is happening.
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`[AI] Using API Key #${randomIndex + 1} of ${keys.length} available.`);
+    }
+
+    return selectedKey?.replace(/['"\s]/g, "");
 };
 
 // Wrapper for Groq calls
